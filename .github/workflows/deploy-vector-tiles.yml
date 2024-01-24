@@ -80,23 +80,23 @@ jobs:
           ls -l
           tileset="$(basename *.7z.001 .7z.001)"
           time eatmydata 7z x "$tileset.7z.001"
-          mv "$tileset" public
-          ls -l public
-          du -csh public
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          path: ./public
+          name: github-pages
+          path: artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
   # Deployment job
   deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
